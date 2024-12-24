@@ -1,18 +1,22 @@
 <template>
     <div class="controls">
         <div class="playlist-background"
-            :class="{ inactive: !playbackService.hasTrack.value, rotate: playbackService.isPlaying.value }">
-            <IconRecordPlayer class="icon icon-record-player" />
+            :class="{ inactive: !playbackService.hasTrack, rotate: playbackService.isPlaying.value }">
+            <!-- <IconRecordPlayer class="icon icon-record-player" /> -->
             <img v-if="trackService.activePlaylist.value !== null"
                 :src="trackService.activePlaylist.value?.images[0].url" alt="playlist-image"
                 :class="{ rotate: playbackService.isPlaying.value }">
-            <IconRecordNeedle class=" icon icon-record-needle" />
+            <!-- <IconRecordNeedle class=" icon icon-record-needle" /> -->
             <!-- <IconPlaylist v-else class="icon icon-playlist" /> -->
             <button class="play" :class="{ inactive: !playbackService.hasTrack.value }" @click="onPlayButtonClick">
                 <IconPlay class="icon icon-play" v-if="!playbackService.isPlaying.value" />
                 <IconPause class="icon icon-pause" v-if="playbackService.isPlaying.value" />
             </button>
+            <!-- <button class="next-song" @click="onNextTrackClick">
+                <IconNextSong class="icon icon-play" />
+            </button> -->
         </div>
+
         <!-- <button>
             <IconNextSong @click="onNextTrackClick" />
         </button> -->
@@ -25,20 +29,23 @@ import IconPause from './icons/IconPause.vue';
 import IconPlay from './icons/IconPlay.vue';
 // import IconNextSong from './icons/IconNextSong.vue';
 import { TrackService } from '@/services/TrackService';
-import IconRecordPlayer from './icons/IconRecordPlayer.vue';
-import IconRecordNeedle from './icons/IconRecordNeedle.vue';
+// import IconRecordPlayer from './icons/IconRecordPlayer.vue';
+// import IconRecordNeedle from './icons/IconRecordNeedle.vue';
+// import IconNextSong from './icons/IconNextSong.vue';
+// import { usePlaylistsStore } from '@/stores/TrackStore';
 
 
 // Access the playback service (singleton)
-const playbackService = PlaybackService();
-const trackService = TrackService();
+const playbackService = PlaybackService.getInstance();
+const trackService = TrackService.getInstance();
+// const playlists = usePlaylistsStore();
 // Method for toggling play
 const onPlayButtonClick = () => {
     playbackService.onPlayButtonClick();
 };
 
 // const onNextTrackClick = () => {
-//     trackService.onNextTrackClick();
+//     playbackService.nextTrack();
 // }
 
 
@@ -52,9 +59,9 @@ const onPlayButtonClick = () => {
 
     .playlist-background {
         position: relative;
-        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.507);
-        border: 2px white solid;
-        overflow: hidden;
+        // box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.507);
+        // border: 2px white solid;
+        // overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -84,24 +91,24 @@ const onPlayButtonClick = () => {
             }
         }
 
-        .icon-record-needle {
-            z-index: 1000;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 102%;
-            height: 102%;
-        }
+        // .icon-record-needle {
+        //     z-index: 1000;
+        //     position: absolute;
+        //     top: 50%;
+        //     left: 50%;
+        //     transform: translate(-50%, -50%);
+        //     width: 102%;
+        //     height: 102%;
+        // }
 
-        .icon-record-player {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 102%;
-            height: 102%;
-        }
+        // .icon-record-player {
+        //     position: absolute;
+        //     top: 50%;
+        //     left: 50%;
+        //     transform: translate(-50%, -50%);
+        //     width: 102%;
+        //     height: 102%;
+        // }
 
         &.inactive {
             filter: brightness(0.5);
@@ -150,11 +157,17 @@ const onPlayButtonClick = () => {
             }
         }
 
+        .play {
+            background-color: var(--col-button-play);
+        }
+
+        .next-song {
+            left: 100%;
+        }
+
     }
 
-    .play {
-        background-color: var(--col-button-play);
-    }
+
 
 
 

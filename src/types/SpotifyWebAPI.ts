@@ -108,6 +108,7 @@ export interface Playlist {
 export interface MyPlaylist extends Playlist {
   listpos: number;
   songs: Track[];
+  fullName: string;
 }
 
 export interface PlaylistTrack {

@@ -3,17 +3,11 @@
         <input ref="searchInput" type="text" v-model="value"
             @input="onInputChange(($event.target as HTMLInputElement).value)" />
 
-        <div class="chosen-playlists" v-if="trackService.chosenList.value.length > 0">
-            <button v-for="(item, index) in trackService.chosenList.value" :key="index"
-                @click="onChosenItemClick(item)">
-                <SearchListItemComponent :image-source="item.images[0]?.url"></SearchListItemComponent>
-            </button>
-        </div>
+
 
         <!-- <app-loading v-if="isLoading" /> -->
 
-        <div class="list-wrapper" v-if="showList"
-            :class="{ hidden: !showList, getHeight: trackService.list.value.length !== 0 }">
+        <div class="list-wrapper" :class="{ getHeight: trackService.list.value.length !== 0 }">
             <button v-for="(item, index) in trackService.list.value" :key="index" @click="onItemClick(item)">
                 <SearchListItemComponent :image-source="item.images[0]?.url"></SearchListItemComponent>
                 <!-- <div class="tooltip">{{ item.fullName }}</div> -->
@@ -25,15 +19,16 @@
 <script lang="ts" setup>
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TrackService } from '@/services/TrackService';
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import SearchListItemComponent from './SearchListItemComponent.vue';
 import vClickOutside from '../directives/ClickOutsideDirective';
 
 
 const value = ref('');
 const showList = ref(false);
-const trackService = TrackService();
+const trackService = TrackService.getInstance();
 
+const emit = defineEmits(['close']);
 
 
 const handleClickOutside = () => {
@@ -47,10 +42,9 @@ const onInputChange = (s: string) => {
 const onItemClick = (playlist: any) => {
     console.log(playlist);
     trackService.addPlaylist(playlist);
+    emit('close');
 };
-const onChosenItemClick = (playlist: any) => {
-    trackService.removePlaylist(playlist);
-};
+
 </script>
 
 <style lang="scss" scoped>
@@ -59,8 +53,6 @@ const onChosenItemClick = (playlist: any) => {
     flex-direction: column;
     overflow: hidden;
     padding: var(--base-gap);
-    border-radius: 0 0 20px 20px;
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
     max-height: 100%;
     height: 100%;
     width: 100%;
@@ -71,7 +63,7 @@ const onChosenItemClick = (playlist: any) => {
     }
 
     input {
-        margin: 1.5rem 1.5rem 0 1.5rem;
+        margin: 1.5rem 1.5rem 1.5rem 1.5rem;
         border: 2px solid transparent;
         border-radius: 2rem;
         width: calc(100% - 3rem);
@@ -79,7 +71,7 @@ const onChosenItemClick = (playlist: any) => {
         padding: 1rem;
         background-color: var(--col-bg-secondary);
         color: white;
-        font-size: 20px;
+        font-size: 2rem;
 
         &:focus {
             outline: none;
@@ -87,28 +79,9 @@ const onChosenItemClick = (playlist: any) => {
         }
     }
 
-    .chosen-playlists {
-        box-sizing: border-box;
-        z-index: 1000;
-        box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
-        width: 100%;
-        height: 10rem;
-        display: flex;
-        flex-wrap: wrap;
-        padding: 1.5rem 0 0 1.5rem;
-
-        button {
-            height: 100%;
-            aspect-ratio: 1/1;
-            background-color: transparent;
-            border: none;
-        }
-
-    }
-
     .list-wrapper {
         padding: 1.5rem 0 0 1.5rem;
-        max-height: 60vh;
+        // height: calc(100% - 4.7rem);
         overflow-y: auto;
         display: flex;
         flex-wrap: wrap;
@@ -128,6 +101,7 @@ const onChosenItemClick = (playlist: any) => {
             flex-grow: 1;
             width: 33.333333%;
             max-width: 33.333333%;
+            aspect-ratio: 1/1;
             display: flex;
             align-items: flex-start;
             background-color: transparent;
