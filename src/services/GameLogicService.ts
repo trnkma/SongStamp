@@ -92,7 +92,7 @@ export class GameLogicService {
     }
 
     public makeGuessAfter(before: Track, after?: Track) {
-        console.log(before, after)
+        this.currentlyPlayingTrack.value = this.trackService.activeTrack.value as Track;
         const currentlyPlayingTrack = this.trackService.activeTrack.value as Track;
         if (after) {
             if (this.checkIfInRange(before, after, currentlyPlayingTrack)) {
@@ -143,7 +143,8 @@ export class GameLogicService {
         this._teams.value[nextIndex].display = true;
     }
 
-    private nextRound() {
+    public nextRound() {
+        this.showResult.value = false;
         this.playbackService.nextTrack();
         console.log(this._teams)
         if (this._teams.value.length > 1) this.setNextTeamActive();
