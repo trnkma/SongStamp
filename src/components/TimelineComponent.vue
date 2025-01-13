@@ -9,19 +9,38 @@
 
         </div>
 
-        <div class="timeline-items">
-            <div v-for="(track, index) in gameLogicService.displayedTeam.value?.timeline" :key="track?.id"
-                class="timeline-item">
-                <div class="guess-field" :class="{ disabled: !gameLogicService.displayedTeam.value?.isActive }">
+        <div class="timeline-items-wrapper">
+            <div class="timeline-items">
+                <div v-for="(track, index) in gameLogicService.displayedTeam.value?.timeline" :key="track?.id"
+                    class="timeline-item">
+                    <div class="guess-area"
+                        @click="gameLogicService.makeGuessBefore(track as Track, gameLogicService.playingTeam.value?.timeline[index - 1] as Track)">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#e8eaed">
+                            <path
+                                d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                        </svg>
+                    </div>
+                    <!-- <div class="guess-field" :class="{ disabled: !gameLogicService.displayedTeam.value?.isActive }">
                     <div class="before"
                         @click="gameLogicService.makeGuessBefore(track as Track, gameLogicService.playingTeam.value?.timeline[index - 1] as Track)">
                     </div>
                     <div class="after"
                         @click="gameLogicService.makeGuessAfter(track as Track, gameLogicService.playingTeam.value?.timeline[index + 1] as Track)">
                     </div>
+                </div> -->
+                    <AlbumComponent class="album-comp" :album="track?.album" :songName="track?.name"
+                        :artist="track?.artists[0].name"></AlbumComponent>
+                    <div v-if="index + 1 === gameLogicService.displayedTeam.value?.timeline.length" class="guess-area"
+                        @click="gameLogicService.makeGuessAfter(track as Track, gameLogicService.playingTeam.value?.timeline[index + 1] as Track)">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                            fill="#e8eaed">
+                            <path
+                                d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+                        </svg>
+                    </div>
                 </div>
-                <AlbumComponent class="album-comp" :album="track?.album" :songName="track?.name"
-                    :artist="track?.artists[0].name"></AlbumComponent>
+
             </div>
         </div>
 
@@ -43,10 +62,13 @@ const gameLogicService = GameLogicService.getInstance();
 
 <style lang="scss" scoped>
 .timeline-wrapper {
+    overflow-y: auto;
+    width: 100%;
 
     .teams {
         display: flex;
         align-items: center;
+        margin-bottom: 1rem;
 
         button {
             background-color: transparent;
@@ -63,7 +85,6 @@ const gameLogicService = GameLogicService.getInstance();
                 padding: 0;
                 margin: 0;
 
-
             }
 
             &.active {
@@ -76,63 +97,104 @@ const gameLogicService = GameLogicService.getInstance();
         }
     }
 
-    .timeline-items {
+    .timeline-items-wrapper {
+        width: 100%;
         display: flex;
         justify-content: center;
 
-        .timeline-item {
-            width: 10vw;
-            margin: 0 0.5rem 0 0.5rem;
+        .timeline-items {
             display: flex;
-            position: relative;
+            height: 16rem;
+            max-width: 100%;
+            // overflow-y: auto;
+            padding: 0 auto;
 
-            .album-comp {
+            .timeline-item {
                 height: 100%;
-            }
-
-            .guess-field {
-                z-index: 1000;
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                width: 100%;
                 display: flex;
+                // position: relative;
 
-                &.disabled {
-                    pointer-events: none;
-                }
-
-                .before {
-                    content: '';
-                    height: 100%;
-                    width: 50%;
+                .guess-area {
+                    position: relative;
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    min-width: 1rem;
+                    height: 100%;
+                    transition: min-width 0.3s;
+
+                    svg {
+                        display: none;
+                    }
 
                     &:hover {
-                        background-color: var(--col-bg);
-                        filter: opacity(0.5);
+                        min-width: 8rem;
+                        background-color: rgba(77, 77, 77, 0.466);
+                        cursor: pointer;
+
+                        svg {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            display: block;
+                        }
+                    }
+
+                    &::before {
+                        z-index: 10000;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        transform: translateX(-100%);
+                        display: block;
+                        content: '';
+                        min-width: 2rem;
+                        height: 100%;
+                    }
+
+                    &::after {
+                        z-index: 10000;
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        transform: translateX(100%);
+                        display: block;
+                        content: '';
+                        min-width: 2rem;
+                        height: 100%;
                     }
                 }
 
-                .after {
-                    content: '>';
+                .album-comp {
                     height: 100%;
-                    width: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    color: white;
-
-                    &:hover {
-                        background-color: var(--col-bg);
-                        filter: opacity(0.5);
-                    }
+                    width: 10rem;
+                    min-width: 10rem;
                 }
             }
         }
     }
+}
+
+::-webkit-scrollbar {
+    height: 8px;
+    /* Set the scrollbar height */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: gray;
+    /* Color of the scrollbar handle */
+    border-radius: 10px;
+    /* Optional: make the scrollbar round */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: darkgray;
+    /* Darker gray on hover */
 }
 </style>

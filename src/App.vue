@@ -3,16 +3,15 @@ import { ref } from 'vue';
 import LoadingComponent from './components/LoadingComponent.vue';
 import LoginComponent from './components/LoginComponent.vue';
 import PlayerComponent from './components/PlayerComponent.vue';
-// import SearchComponent from './components/SearchComponent.vue';
 import TimelineComponent from './components/TimelineComponent.vue';
 import { AuthService } from './services/AuthService';
-// import { TrackService } from './services/TrackService';
 import AlbumComponent from './components/AlbumComponent.vue';
+import AlbumDetailComponent from './components/AlbumDetailComponent.vue';
 import SettingsComponent from './components/SettingsComponent.vue';
 import { GameLogicService } from './services/GameLogicService';
 const authService = AuthService();
-// const trackService = TrackService.getInstance();
 const gameLogicService = GameLogicService.getInstance();
+
 if (localStorage.getItem('refresh_token')) {
   authService.getRefreshToken();
 } else {
@@ -24,12 +23,12 @@ if (localStorage.getItem('refresh_token')) {
     }
   }
 }
+
+
 const settingsOpen = ref<boolean>(true);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const currentAlbum = ref<any | null>(null);
-// const showAlbum = () => {
-//   currentAlbum.value = trackService.getCurrentAlbum();
-// }
+
 
 </script>
 
@@ -44,6 +43,7 @@ const currentAlbum = ref<any | null>(null);
       <!-- <SearchComponent class="search-comp" /> -->
       <PlayerComponent class="player-comp" />
       <AlbumComponent class="album-comp" v-if="currentAlbum" :album="currentAlbum"></AlbumComponent>
+
       <!-- <button @click="showAlbum()">getDate</button> -->
       <TimelineComponent class="timeline-comp" />
       <div class="result" v-if="gameLogicService.showResult.value && gameLogicService.currentlyPlayingTrack">
@@ -55,6 +55,9 @@ const currentAlbum = ref<any | null>(null);
           <button @click="gameLogicService.nextRound()">Next Track</button>
         </div>
       </div>
+      <AlbumDetailComponent :songDetails="gameLogicService.songDetails.value" class="album-detail"
+        v-if="gameLogicService.displaySongDetails.value">
+      </AlbumDetailComponent>
       <!-- <app-snackbar /> -->
     </template>
 
@@ -181,13 +184,13 @@ const currentAlbum = ref<any | null>(null);
     height: 35vh;
   }
 
+
   .timeline-comp {
     position: absolute;
     bottom: 5%;
     left: 50%;
     transform: translate(-50%);
     width: 90%;
-
     // @media(min-width: 1024px) {
     //   width: 60%;
     // }

@@ -19,6 +19,12 @@ export class GameLogicService {
     public displayedTeam = computed(() => this.getDisplayedTeam());
     public currentlyPlayingTrack = ref<Track | null>(null);
     public showResult = ref(false);
+    public songDetails = ref({
+        album: null,
+        songName: null,
+        artist: null
+    });
+    public displaySongDetails = ref(false);
 
     private constructor() {
         this.trackService = TrackService.getInstance();
@@ -30,6 +36,12 @@ export class GameLogicService {
             GameLogicService.instance = new GameLogicService();
         }
         return GameLogicService.instance;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public showSongDetails(songProps: any) {
+        this.songDetails.value = songProps;
+        this.displaySongDetails.value = true;
     }
 
     public get teams() {
