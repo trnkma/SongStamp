@@ -30,7 +30,6 @@ const props = defineProps<Props>();
     align-items: center;
 
     .list-item-cover {
-        display: flex;
         position: relative;
         width: 100%;
         aspect-ratio: 1/1;
@@ -66,7 +65,6 @@ const props = defineProps<Props>();
     }
 
     .list-item-info {
-        display: block;
         width: 100%;
         padding-top: 1rem;
         color: white;
