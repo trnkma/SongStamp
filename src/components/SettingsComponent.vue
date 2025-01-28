@@ -1,29 +1,40 @@
 <template>
     <div class="settings-wrapper">
-        <h1>Teams</h1>
-        <div class="teams-wrapper">
-            <div class="team-item" v-for="(team, index) in gameLogicService.teams.value" :key="team.id">
-                <p>Team {{ index + 1 }}</p>
-                <input type="text" v-model="team.name" placeholder="Enter team name"
-                    @input="updateTeamName(team.id, team.name)" />
-                <button @click="removeTeam(team.id)">-</button>
+        <h1 class="title">Settings</h1>
+        <div class="overflow-container">
+            <h1>Teams</h1>
+            <div class="teams-wrapper">
+                <div class="team-item" v-for="(team, index) in gameLogicService.teams.value" :key="team.id">
+                    <p>Team {{ index + 1 }}</p>
+                    <div class="input-wrapper">
+                        <input type="text" v-model="team.name" placeholder="Enter team name"
+                            @input="updateTeamName(team.id, team.name)" />
+                        <button class="btn-remove-team" @click="removeTeam(team.id)">-</button>
+                    </div>
+                </div>
+                <button class="btn-add-team" @click="addTeam()">+</button>
             </div>
-            <button @click="addTeam()">+</button>
+            <h1>Playlists</h1>
+            <div class="chosen-playlists">
+                <button v-for="(item, index) in trackService.chosenList.value" :key="index"
+                    @click="onChosenItemClick(item)">
+                    <SearchListItemComponent :image-source="item.images[0]?.url"></SearchListItemComponent>
+                </button>
+                <button class="add-playlist-button" @click="showSearchPopup = true">+</button>
+            </div>
         </div>
-        <h1>Playlists</h1>
-        <div class="chosen-playlists">
-            <button v-for="(item, index) in trackService.chosenList.value" :key="index"
-                @click="onChosenItemClick(item)">
-                <SearchListItemComponent :image-source="item.images[0]?.url"></SearchListItemComponent>
+        <div class="spacer"></div>
+        <div class="settings-controls">
+            <div class="spacer"></div>
+            <button @click="startGame()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%"
+                    fill="#e8eaed">
+                    <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+                </svg>
             </button>
-            <button class="add-playlist-button" @click="showSearchPopup = true">+</button>
         </div>
         <div class="search-comp-wrapper" v-if="showSearchPopup">
             <SearchComponent @close="closeSearchPopup" />
-        </div>
-        <div class="settings-controls">
-            <div class="spacer"></div>
-            <button @click="startGame()">Accept</button>
         </div>
     </div>
 </template>
@@ -77,54 +88,90 @@ const startGame = () => {
 
 <style lang="scss" scoped>
 .settings-wrapper {
+    background-color: var(--col-bg);
+    display: flex;
+    flex-direction: column;
+    color: white;
     width: 100%;
     height: 100%;
+    max-height: 100%;
     padding: 2rem;
-    // position: relative;
+
+    .title {
+        text-align: center;
+    }
+
+    .overflow-container {
+        // max-height: calc(100% - 4rem);
+        overflow-y: auto;
+    }
 
     h1 {
         margin-bottom: 20px;
     }
 
-    button {
-        margin-bottom: 20px;
-    }
-
     .teams-wrapper {
         display: flex;
+        flex-direction: column;
         flex-wrap: wrap;
 
-        .team-item {
-            margin-bottom: 10px;
-
-            input {
-                padding: 8px;
-                font-size: 16px;
-                width: 200px;
-            }
+        button {
+            background-color: transparent;
+            border: none;
         }
-    }
 
-    .search-comp {
-        background-color: var(--col-bg);
-        width: 100%;
-        height: auto;
+        .btn-add-team {
+            width: fit-content;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
 
+        .team-item {
+            margin-bottom: 1.5rem;
 
-        @media(min-width: 1024px) {
-            width: 60%;
+            .input-wrapper {
+                display: flex;
+                margin-top: 1rem;
+
+                input {
+                    color: white;
+                    caret-color: white;
+                    outline: none;
+                    background-color: transparent;
+                    border: none;
+                    border-radius: 0;
+                    border-bottom: 1px solid white;
+                    margin-bottom: 0.1rem;
+                    padding: 1rem;
+                    font-size: 1.6rem;
+                    flex: 1 1 auto;
+
+                    &:focus {
+                        border-bottom: 2px solid white;
+                        margin-bottom: 0;
+                    }
+                }
+
+                .btn-remove-team {
+                    width: fit-content;
+                    font-size: 3rem;
+                    color: white;
+                    margin-bottom: 0;
+                }
+            }
         }
     }
 
     .chosen-playlists {
         box-sizing: border-box;
         width: 100%;
-        height: 10rem;
         display: flex;
         flex-wrap: wrap;
 
         button {
-            height: 100%;
+            width: 33.333333%;
+            max-width: 33.333333%;
             aspect-ratio: 1/1;
             background-color: transparent;
             border: none;
@@ -145,12 +192,13 @@ const startGame = () => {
     }
 
     .search-comp-wrapper {
+        z-index: 2000;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 40vw;
-        height: 80vh;
+        width: 90vw;
+        height: 90dvh;
         background-color: var(--col-bg);
         border-radius: 2rem;
         box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
@@ -158,14 +206,18 @@ const startGame = () => {
 
     .settings-controls {
         width: 100%;
-        height: 3rem;
         display: flex;
         align-items: center;
 
-        .spacer {
-            flex: 1 1 auto;
+        button {
+            background-color: transparent;
+            border: none;
+            color: white;
+
+            width: 5rem;
         }
     }
+
 
 }
 </style>
