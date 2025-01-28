@@ -1,13 +1,7 @@
 <template>
     <div class="search-wrapper" v-click-outside="handleClickOutside" @click="showList = true">
         <div class="close-wrapper">
-            <button @click="emit('close')">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="#e8eaed">
-                    <path
-                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-                </svg>
-            </button>
+            <CloseButtonComponent @click="emit('close')"></CloseButtonComponent>
         </div>
         <div class="input-wrapper">
             <input ref="searchInput" type="text" v-model="inputValue" placeholder="Search playlists..."
@@ -45,6 +39,7 @@ import SearchListItemComponent from './SearchListItemComponent.vue';
 import vClickOutside from '../directives/ClickOutsideDirective';
 import type { MyPlaylist } from '@/types/SpotifyWebAPI';
 import LoadingComponent from './LoadingComponent.vue';
+import CloseButtonComponent from './shared/CloseButtonComponent.vue';
 
 
 const inputValue = ref('');
@@ -154,6 +149,7 @@ const clearInput = () => {
         flex-wrap: wrap;
 
 
+
         &.hidden {
             display: none;
         }
@@ -162,13 +158,10 @@ const clearInput = () => {
             padding: 0 1.5rem 1.5rem 0;
             position: relative;
             width: fit-content;
-            display: block;
             flex-grow: 1;
             width: 33.333333%;
             max-width: 33.333333%;
-            aspect-ratio: 1/1;
             display: flex;
-            align-items: flex-start;
             background-color: transparent;
             border: none;
 
