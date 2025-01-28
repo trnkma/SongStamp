@@ -4,9 +4,9 @@
             <img :src="props.imageSource" alt="cover" />
             <div class="description">{{ props.fullName }}</div>
         </div>
-        <!-- <div class="list-item__info">
+        <div class="list-item__info">
             <p>{{ props.name }}</p>
-        </div> -->
+        </div>
     </div>
 </template>
 
@@ -66,12 +66,13 @@ const props = defineProps<Props>();
 
     .list-item__info {
         width: 100%;
-        padding: 1rem;
+        padding-top: 1rem;
         color: white;
         display: flex;
         flex-direction: column;
         justify-content: center;
         gap: 0.5rem;
+        word-break: break-all;
 
         p {
             width: 100%;
