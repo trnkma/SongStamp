@@ -13,11 +13,10 @@ defineProps({
             <div></div>
             <div></div>
         </div>
-        @if (message) {<p>{{ message }}</p>}
     </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .loading-wrapper {
     background-color: var(--col-bg);
     width: 100%;
