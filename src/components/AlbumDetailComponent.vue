@@ -1,7 +1,7 @@
 <template>
     <div class="overlay" @click="gameLogicService.displaySongDetails.value = false">
-        <div class="album-wrapper" @click="test($event)">
-            <img :src="props.songDetails.album.images[0].url" alt="album-image">
+        <div class="album-wrapper" @click="onClick($event)">
+            <img :src="props.songDetails.album?.images[0].url" alt="album-image">
             <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
             <h1>{{ formattedReleaseDate }}</h1>
             <div class="info">
@@ -13,22 +13,24 @@
 </template>
 
 <script lang="ts" setup>
-import { GameLogicService } from '@/services/GameLogicService';
+import { GameLogicService, type SongDetails } from '@/services/GameLogicService';
 import { computed } from 'vue';
 
 
 interface Props {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    songDetails: any;
+
+    songDetails: SongDetails;
 }
 const gameLogicService = GameLogicService.getInstance();
 const props = defineProps<Props>();
 const formattedReleaseDate = computed(() => {
-    const [year] = props.songDetails.album.release_date.split('-');
-    return `${year}`;
+    if (props.songDetails.album) {
+        const [year] = props.songDetails.album?.release_date.split('-');
+        return `${year}`;
+    } else return null;
     // return `${day}.${month}.${year}`;
 });
-const test = (event: MouseEvent) => {
+const onClick = (event: MouseEvent) => {
     event?.stopPropagation()
 }
 
@@ -50,7 +52,11 @@ const test = (event: MouseEvent) => {
         padding: 2rem;
         border-radius: 2rem;
         background-color: var(--col-bg);
-        width: 50rem;
+        width: 90vw;
+
+        @media(min-width: 1024px) {
+            width: 40vw;
+        }
 
         img {
             width: 100%;
@@ -61,22 +67,6 @@ const test = (event: MouseEvent) => {
         h1 {
             text-align: center;
         }
-
-        // .info {
-        //     background-color: rgba(0, 0, 0, 0.555);
-        //     position: absolute;
-        //     top: 0;
-        //     left: 0;
-        //     width: 100%;
-        //     height: 100%;
-        //     opacity: 0;
-        // }
-
-        // &:hover {
-        //     .info {
-        //         opacity: 1;
-        //     }
-        // }
     }
 }
 </style>
