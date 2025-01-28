@@ -1,7 +1,14 @@
 <template>
     <div class="search-wrapper" v-click-outside="handleClickOutside" @click="showList = true">
-        <input ref="searchInput" type="text" v-model="value"
-            @input="onInputChange(($event.target as HTMLInputElement).value)" />
+        <div class="input-wrapper">
+            <input ref="searchInput" type="text" v-model="value"
+                @input="onInputChange(($event.target as HTMLInputElement).value)" />
+            <svg v-if="value" @click="value = ''" xmlns="http://www.w3.org/2000/svg" height="24px"
+                viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                <path
+                    d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+            </svg>
+        </div>
 
 
 
@@ -9,7 +16,8 @@
 
         <div class="list-wrapper" :class="{ getHeight: trackService.list.value.length !== 0 }">
             <button v-for="(item, index) in trackService.list.value" :key="index" @click="onItemClick(item)">
-                <SearchListItemComponent :image-source="item.images[0]?.url"></SearchListItemComponent>
+                <SearchListItemComponent :image-source="item.images[0]?.url" :name="item.name">
+                </SearchListItemComponent>
                 <!-- <div class="tooltip">{{ item.fullName }}</div> -->
             </button>
         </div>
@@ -17,11 +25,11 @@
 </template>
 
 <script lang="ts" setup>
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TrackService } from '@/services/TrackService';
 import { ref, defineEmits } from 'vue';
 import SearchListItemComponent from './SearchListItemComponent.vue';
 import vClickOutside from '../directives/ClickOutsideDirective';
+import type { MyPlaylist } from '@/types/SpotifyWebAPI';
 
 
 const value = ref('');
@@ -39,8 +47,7 @@ const onInputChange = (s: string) => {
     trackService.getPlaylists(s);
 };
 
-const onItemClick = (playlist: any) => {
-    console.log(playlist);
+const onItemClick = (playlist: MyPlaylist) => {
     trackService.addPlaylist(playlist);
     emit('close');
 };
@@ -62,33 +69,39 @@ const onItemClick = (playlist: any) => {
         padding: 0 1.5rem 1.5rem 0;
     }
 
-    input {
-        margin: 1.5rem 1.5rem 1.5rem 1.5rem;
-        border: 2px solid transparent;
-        border-radius: 2rem;
-        width: calc(100% - 3rem);
-        // height: 4rem;
-        padding: 1rem;
-        background-color: var(--col-bg-secondary);
-        color: white;
-        font-size: 2rem;
+    .input-wrapper {
+        display: flex;
+        align-items: center;
+        position: relative;
 
-        &:focus {
-            outline: none;
-            border: 2px solid white;
+        input {
+            margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 2rem;
+            width: calc(100% - 3rem);
+            padding: 1rem;
+            background-color: var(--col-bg-secondary);
+            color: white;
+            font-size: 2rem;
+
+            &:focus {
+                outline: none;
+                border: 2px solid white;
+            }
+        }
+
+        svg {
+            position: absolute;
+            right: 2.5rem;
         }
     }
 
     .list-wrapper {
         padding: 1.5rem 0 0 1.5rem;
-        // height: calc(100% - 4.7rem);
         overflow-y: auto;
         display: flex;
         flex-wrap: wrap;
 
-        // &.getHeight {
-        //     max-height: 60vh;
-        // }
 
         &.hidden {
             display: none;
