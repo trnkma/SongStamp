@@ -1,10 +1,10 @@
 <template>
     <div class="list-item">
-        <div class="list-item__cover">
+        <div class="list-item-cover">
             <img :src="props.imageSource" alt="cover" />
             <div class="description">{{ props.fullName }}</div>
         </div>
-        <div class="list-item__info">
+        <div class="list-item-info">
             <p>{{ props.name }}</p>
         </div>
     </div>
@@ -29,7 +29,8 @@ const props = defineProps<Props>();
     flex-direction: column;
     align-items: center;
 
-    .list-item__cover {
+    .list-item-cover {
+        display: flex;
         position: relative;
         width: 100%;
         aspect-ratio: 1/1;
@@ -64,7 +65,8 @@ const props = defineProps<Props>();
         }
     }
 
-    .list-item__info {
+    .list-item-info {
+        display: block;
         width: 100%;
         padding-top: 1rem;
         color: white;
