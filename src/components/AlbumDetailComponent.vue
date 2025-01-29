@@ -1,5 +1,5 @@
 <template>
-    <div class="overlay" @click="gameLogicService.displaySongDetails.value = false">
+    <div class="overlay" @click="close($event)">
         <div class="album-wrapper" @click="onClick($event)">
             <img :src="props.songDetails.album?.images[0].url" alt="album-image">
             <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
@@ -13,16 +13,16 @@
 </template>
 
 <script lang="ts" setup>
-import { GameLogicService, type SongDetails } from '@/services/GameLogicService';
+import { type SongDetails } from '@/services/GameLogicService';
 import { computed } from 'vue';
 
-
 interface Props {
-
     songDetails: SongDetails;
 }
-const gameLogicService = GameLogicService.getInstance();
 const props = defineProps<Props>();
+
+const emit = defineEmits(['close']);
+
 const formattedReleaseDate = computed(() => {
     if (props.songDetails.album) {
         const [year] = props.songDetails.album?.release_date.split('-');
@@ -34,13 +34,15 @@ const onClick = (event: MouseEvent) => {
     event?.stopPropagation()
 }
 
+const close = (event: MouseEvent) => {
+    event?.stopPropagation();
+    emit('close');
+}
+
 </script>
 
 <style lang="scss" scoped>
 .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background-color: transparent;
