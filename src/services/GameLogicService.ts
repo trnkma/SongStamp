@@ -1,5 +1,5 @@
-import type { Track } from "@/types/SpotifyWebAPI";
-import { computed, ref } from "vue";
+import type { Album, Track } from "@/types/SpotifyWebAPI";
+import { computed, ref, type ComputedRef } from "vue";
 import { TrackService } from "./TrackService";
 import { PlaybackService } from "./PlaybackService";
 
@@ -10,6 +10,13 @@ export interface Team {
     isActive: boolean
     display: boolean;
 }
+
+export interface SongDetails {
+    album: Album | undefined;
+    songName: string | undefined;
+    artist: string | undefined;
+}
+
 export class GameLogicService {
     private static instance: GameLogicService;
     private playbackService: PlaybackService;
@@ -19,11 +26,11 @@ export class GameLogicService {
     public displayedTeam = computed(() => this.getDisplayedTeam());
     public currentlyPlayingTrack = ref<Track | null>(null);
     public showResult = ref(false);
-    public songDetails = ref({
-        album: null,
-        songName: null,
-        artist: null
-    });
+    // public songDetails = ref<SongDetails>({
+    //     album: undefined,
+    //     songName: undefined,
+    //     artist: undefined
+    // });
     public displaySongDetails = ref(false);
 
     private constructor() {
@@ -38,10 +45,19 @@ export class GameLogicService {
         return GameLogicService.instance;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public showSongDetails(songProps: any) {
-        this.songDetails.value = songProps;
-        this.displaySongDetails.value = true;
+    // public showSongDetails(songProps: SongDetails) {
+    //     // this.songDetails.value = songProps;
+    //     this.displaySongDetails.value = true;
+    // }
+
+    public get currentSongDetails(): ComputedRef<SongDetails> {
+        return computed(() => {
+            return {
+                album: this.currentlyPlayingTrack.value?.album,
+                songName: this.currentlyPlayingTrack.value?.name,
+                artist: this.currentlyPlayingTrack.value?.artists[0].name
+            }
+        })
     }
 
     public get teams() {
@@ -87,36 +103,34 @@ export class GameLogicService {
     }
 
 
+
+    // i know, i know - this make guess logic could be written much better, but it was late af
     public makeGuessBefore(after: Track, before?: Track) {
-        this.currentlyPlayingTrack.value = this.trackService.activeTrack.value as Track;
-        const currentlyPlayingTrack = this.trackService.activeTrack.value as Track;
+        if (!this.currentlyPlayingTrack) return;
         if (before) {
-            if (this.checkIfInRange(before, after, currentlyPlayingTrack)) {
-                this.addToActiveTimeline(currentlyPlayingTrack);
+            if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
+                this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
             }
         } else {
-            if (this.getReleaseYearOfTrack(currentlyPlayingTrack) <= this.getReleaseYearOfTrack(after)) {
-                this.addToActiveTimeline(currentlyPlayingTrack);
+            if (this.getReleaseYearOfTrack(this.currentlyPlayingTrack.value as Track) <= this.getReleaseYearOfTrack(after)) {
+                this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
             }
         }
         this.showResult.value = true;
-        // this.nextRound();
     }
 
     public makeGuessAfter(before: Track, after?: Track) {
-        this.currentlyPlayingTrack.value = this.trackService.activeTrack.value as Track;
-        const currentlyPlayingTrack = this.trackService.activeTrack.value as Track;
+        if (!this.currentlyPlayingTrack) return;
         if (after) {
-            if (this.checkIfInRange(before, after, currentlyPlayingTrack)) {
-                this.addToActiveTimeline(currentlyPlayingTrack);
+            if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
+                this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
             }
         } else {
-            if (this.getReleaseYearOfTrack(currentlyPlayingTrack) >= this.getReleaseYearOfTrack(before)) {
-                this.addToActiveTimeline(currentlyPlayingTrack);
+            if (this.getReleaseYearOfTrack(this.currentlyPlayingTrack.value as Track) >= this.getReleaseYearOfTrack(before)) {
+                this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
             }
         }
         this.showResult.value = true;
-        // this.nextRound();
     }
 
     private checkIfInRange(before: Track, after: Track, guess: Track) {
@@ -128,6 +142,7 @@ export class GameLogicService {
     }
 
     private addToActiveTimeline(track: Track) {
+        if (!track) return;
         let activeTimeline = this._teams.value.find(team => team.isActive)?.timeline;
         if (activeTimeline) {
             activeTimeline.push(track);
@@ -158,7 +173,7 @@ export class GameLogicService {
     public nextRound() {
         this.showResult.value = false;
         this.playbackService.nextTrack();
-        console.log(this._teams)
+        this.currentlyPlayingTrack = this.trackService.activeTrack;
         if (this._teams.value.length > 1) this.setNextTeamActive();
     }
 
