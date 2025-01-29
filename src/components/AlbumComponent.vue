@@ -1,39 +1,47 @@
 <template>
-    <div class="album-wrapper" @click="openDetails($event)">
-        <img :src="props.album.images[0].url" alt="album-image">
-        <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
-        <h1>{{ formattedReleaseDate }}</h1>
+    <div>
+        <div class="album-wrapper" @click="openDetails($event)">
+            <img :src="props.album?.images[0].url" alt="album-image">
+            <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
+            <h1>{{ formattedReleaseDate }}</h1>
+        </div>
+        <AlbumDetailComponent v-if="showDetails" class="album-detail" :song-details="props"
+            @close="showDetails = false">
+        </AlbumDetailComponent>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { GameLogicService } from '@/services/GameLogicService';
-import { computed } from 'vue';
-const gameLogicService = GameLogicService.getInstance();
-interface Props {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    album: any;
-    songName?: string;
-    artist?: string;
-}
+import { type SongDetails } from '@/services/GameLogicService';
+import { computed, ref } from 'vue';
+import AlbumDetailComponent from './AlbumDetailComponent.vue';
+// const gameLogicService = GameLogicService.getInstance();
+
+const showDetails = ref(false);
+
 const openDetails = (event: MouseEvent) => {
     event?.stopPropagation();
-    gameLogicService.showSongDetails(props);
+    // gameLogicService.showSongDetails(props);
+    showDetails.value = true;
 }
-const props = defineProps<Props>();
+const props = defineProps<SongDetails>();
 const formattedReleaseDate = computed(() => {
-    const [year] = props.album.release_date.split('-');
-    return `${year}`;
+    if (props.album) {
+        const [year] = props.album?.release_date.split('-');
+        return `${year}`;
+    } else return null;
     // return `${day}.${month}.${year}`;
 });
 </script>
 
 <style lang="scss" scoped>
-.ablum-detail {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.album-detail {
+    z-index: 10000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
 }
 
 .album-wrapper {
