@@ -76,9 +76,6 @@ const props = defineProps<Props>();
 
         p {
             width: 100%;
-            // text-overflow: ellipsis;
-            // white-space: nowrap;
-            // overflow: hidden;
         }
     }
 }
