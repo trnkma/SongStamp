@@ -105,8 +105,6 @@ const clearInput = () => {
         }
     }
 
-    button {}
-
     .input-wrapper {
         display: flex;
         align-items: center;
