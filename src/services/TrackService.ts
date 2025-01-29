@@ -5,7 +5,6 @@ import { computed, reactive, ref } from "vue";
 import type { Track, MyPlaylist, Playlist } from "@/types/SpotifyWebAPI";
 
 export class TrackService {
-    // private playbackService: PlaybackService;
     private static instance: TrackService;
     private apiClient: AxiosInstance;
     private searchUrl = "https://api.spotify.com/v1/search";
@@ -16,7 +15,7 @@ export class TrackService {
     private leftOverPlaylists: MyPlaylist[] = [];
     private searchLimit = 18;
 
-    public isLoading = ref(false);
+    public isLoading = ref<boolean>(false);
     public activePlaylist = ref<MyPlaylist | null>(null);
 
     private state = reactive({
@@ -27,7 +26,6 @@ export class TrackService {
     public activeTrack = ref<Track | null>(null);
 
     private constructor() {
-        // this.playbackService = PlaybackService.getInstance();
         this.apiClient = axios.create({
             baseURL: this.searchUrl,
             headers: {
@@ -60,7 +58,7 @@ export class TrackService {
         this.isLoading.value = true;
         this.checkForReset(s);
         if (this.searchDelay) clearTimeout(this.searchDelay);
-        this.searchDelay = setTimeout(async () => {
+        this.searchDelay = setTimeout(async () => {                 //delay searching to give user time to type
             const response = await this.apiClient.get(
                 `${this.searchUrl}?query=${s}&type=playlist&market=ES&offset=${this.offset}&limit=${this.limit}`
             );
@@ -70,7 +68,7 @@ export class TrackService {
                 playlists: {
                     ...data.playlists,
                     items: data.playlists.items.filter(
-                        (item: any) => item && item.tracks.total >= 100
+                        (item: Playlist) => item && item.tracks.total >= 100 //only take playlists with 100 or more tracks
                     ),
                 },
             };
@@ -83,6 +81,7 @@ export class TrackService {
 
             console.log(accumulatedPlaylists)
 
+            //do again until accumulated playlists count == 18
             if (accumulatedPlaylists.length < this.searchLimit) {
                 await this.getPlaylists(s, accumulatedPlaylists);
             } else {
@@ -100,11 +99,15 @@ export class TrackService {
         }, 350);
     }
 
+    public resetPlaylists() {
+        this.state.list = [];
+        this.leftOverPlaylists = [];
+        this.offset = 0;
+    }
+
     private checkForReset(s: string): void {
         if (s !== this.lastSearchedString) {
-            this.state.list = [];
-            this.leftOverPlaylists = [];
-            this.offset = 0;
+            this.resetPlaylists();
             this.lastSearchedString = s;
         }
     }
