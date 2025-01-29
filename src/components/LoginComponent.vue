@@ -16,12 +16,8 @@
 <script lang="ts" setup>
 import { AuthService } from '@/services/AuthService';
 
-
-// Access the playback service (singleton)
 const authService = AuthService();
 
-
-// Method for toggling play
 const login = () => {
     authService.login();
 };
