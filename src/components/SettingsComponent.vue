@@ -97,10 +97,13 @@ const startGame = () => {
     flex-direction: column;
     color: white;
     width: 100%;
-    max-width: 50vw;
     height: 100%;
     max-height: 100%;
     padding: 2rem;
+
+    @media(min-width: 1200px) {
+        max-width: 50vw;
+    }
 
     .error-message {
         opacity: 0;
