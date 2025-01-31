@@ -22,7 +22,6 @@
                 @click="onItemClick(item)">
                 <SearchListItemComponent :image-source="item.images[0]?.url" :name="item.name">
                 </SearchListItemComponent>
-                <!-- <div class="tooltip">{{ item.fullName }}</div> -->
             </button>
             <div v-if="inputValue && trackService.list.value.length > 0 && !trackService.isLoading.value"
                 class="more-items-wrapper">
@@ -38,7 +37,6 @@ import { ref, defineEmits } from 'vue';
 import SearchListItemComponent from './SearchListItemComponent.vue';
 import vClickOutside from '../directives/ClickOutsideDirective';
 import type { MyPlaylist } from '@/types/SpotifyWebAPI';
-import LoadingComponent from './LoadingComponent.vue';
 import CloseButtonComponent from './shared/CloseButtonComponent.vue';
 
 
