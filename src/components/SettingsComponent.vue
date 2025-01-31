@@ -9,12 +9,17 @@
                     <div class="input-wrapper">
                         <input type="text" v-model="team.name" placeholder="Enter team name"
                             @input="updateTeamName(team.id, team.name)" />
-                        <button class="btn-remove-team" @click="removeTeam(team.id)">-</button>
+                        <button v-if="index != 0" class="btn-remove-team" @click="removeTeam(team.id)">-</button>
                     </div>
                 </div>
                 <button class="btn-add-team" @click="addTeam()">+</button>
             </div>
             <h1>Playlists</h1>
+            <p class="error-message"
+                :class="{ showPlaylistInputError: trackService.chosenList.value.length === 0 && showPlaylistError }">At
+                least one playlist needs
+                to be selected to
+                play the game!</p>
             <div class="chosen-playlists">
                 <button v-for="(item, index) in trackService.chosenList.value" :key="index"
                     @click="onChosenItemClick(item)">
@@ -52,9 +57,9 @@ const trackService = TrackService.getInstance();
 
 const emits = defineEmits(['done']);
 
-
-
 const showSearchPopup = ref(false);
+
+const showPlaylistError = ref(false);
 
 const addTeam = () => {
     gameLogicService.addTeam();
@@ -66,10 +71,6 @@ const removeTeam = (id: number) => {
 
 const updateTeamName = (id: number, name: string | null) => {
     gameLogicService.updateTeamName(id, name);
-    // const team = teams.value.find((t) => t.id === id);
-    // if (team) {
-    //     team.name = name;
-    // }
 };
 const closeSearchPopup = () => {
     showSearchPopup.value = false;
@@ -80,7 +81,10 @@ const onChosenItemClick = (playlist: MyPlaylist) => {
 };
 
 const startGame = () => {
-    if (trackService.chosenList.value.length === 0) return
+    if (trackService.chosenList.value.length === 0) {
+        showPlaylistError.value = true;
+        return;
+    }
     gameLogicService.startGame();
     emits('done');
 }
@@ -96,6 +100,19 @@ const startGame = () => {
     height: 100%;
     max-height: 100%;
     padding: 2rem;
+
+    .error-message {
+        opacity: 0;
+        color: red;
+    }
+
+    .showTeamInputError {
+        opacity: 1;
+    }
+
+    .showPlaylistInputError {
+        opacity: 1;
+    }
 
     .title {
         text-align: center;
