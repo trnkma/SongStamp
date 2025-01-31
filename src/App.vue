@@ -82,7 +82,8 @@ const settingsOpen = ref<boolean>(true);
       background-color: var(--col-bg);
 
       @media(min-width: 1024px) {
-        width: 30%;
+        width: 40vw;
+        max-width: 60rem;
       }
 
       .controls {
@@ -116,12 +117,6 @@ const settingsOpen = ref<boolean>(true);
     width: 100%;
     height: 100%;
   }
-
-  // button {
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  // }
 
   .settings-comp {
     position: absolute;
