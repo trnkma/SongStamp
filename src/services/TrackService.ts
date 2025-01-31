@@ -3,9 +3,11 @@ import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { computed, reactive, ref } from "vue";
 import type { Track, MyPlaylist, Playlist } from "@/types/SpotifyWebAPI";
+import { PlaybackService } from "./PlaybackService";
 
 export class TrackService {
     private static instance: TrackService;
+    private playbackService = PlaybackService.getInstance();
     private apiClient: AxiosInstance;
     private searchUrl = "https://api.spotify.com/v1/search";
     private limit = 50;
@@ -132,10 +134,6 @@ export class TrackService {
         this.state.list = this.state.list.filter(
             (p: Playlist) => p.id !== playlist.id
         );
-        // if (this.activeTrack.value === null) {
-        //     console.log("No active track, setting random song");
-        //     this.activeTrack.value = this.getRandomSong();
-        // }
     }
 
     public removePlaylist(playlist: MyPlaylist): void {
@@ -155,26 +153,29 @@ export class TrackService {
     public getRandomSong(): Track | null {
         if (this.state.chosenList?.length === 0) return null;
         const chosenList = this.getRandomPlaylist();
-        // const tracks = chosenList.songs;
         const [song] = chosenList.songs.splice(Math.floor(Math.random() * chosenList.songs.length), 1);
-        // const randomIndex = Math.floor(Math.random() * tracks.length);
-        // this.activeTrack.value = tracks[randomIndex];
         return song;
     }
 
     public getNexSong(): Track | null {
         if (this.state.chosenList?.length === 0) return null;
         const chosenList = this.getRandomPlaylist();
-        // const tracks = chosenList.songs;
         const [song] = chosenList.songs.splice(Math.floor(Math.random() * chosenList.songs.length), 1);
-        // const randomIndex = Math.floor(Math.random() * tracks.length);
-        // this.activeTrack.value = tracks[randomIndex];
         this.activeTrack.value = song;
         return song;
     }
 
     public setRandomSong() {
         this.activeTrack.value = this.getRandomSong();
+    }
+
+    public playTrack(track: Track) {
+        this.activeTrack.value = track;
+        this.playbackService.playTrack(track);
+    }
+
+    public nextTrack() {
+        this.playbackService.playTrack(this.getNexSong());
     }
 
     private getRandomPlaylist(): MyPlaylist {
