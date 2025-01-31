@@ -1,11 +1,11 @@
 <template>
     <div class="controls">
         <div class="playlist-background"
-            :class="{ inactive: !playbackService.hasTrack, rotate: playbackService.isPlaying.value }">
+            :class="{ inactive: !trackService.activeTrack, rotate: playbackService.isPlaying.value }">
             <img v-if="trackService.activePlaylist.value !== null"
                 :src="trackService.activePlaylist.value?.images[0].url" alt="playlist-image"
                 :class="{ rotate: playbackService.isPlaying.value }">
-            <button class="play" :class="{ inactive: !playbackService.hasTrack.value }" @click="onPlayButtonClick">
+            <button class="play" :class="{ inactive: !trackService.activeTrack.value }" @click="onPlayButtonClick">
                 <IconPlay class="icon icon-play" v-if="!playbackService.isPlaying.value" />
                 <IconPause class="icon icon-pause" v-if="playbackService.isPlaying.value" />
             </button>
@@ -19,15 +19,13 @@ import IconPause from './icons/IconPause.vue';
 import IconPlay from './icons/IconPlay.vue';
 import { TrackService } from '@/services/TrackService';
 
-
-// Access the playback service (singleton)
 const playbackService = PlaybackService.getInstance();
 const trackService = TrackService.getInstance();
-// Method for toggling play
-const onPlayButtonClick = () => {
-    playbackService.onPlayButtonClick();
-};
 
+
+const onPlayButtonClick = () => {
+    playbackService.togglePlay();
+};
 
 </script>
 
@@ -51,21 +49,10 @@ const onPlayButtonClick = () => {
         padding: 0;
         margin: 0;
 
-        &:hover {
-            button {
-                display: flex;
-            }
-        }
-
         img {
-            border-radius: 50%;
             width: 68%;
             z-index: 900;
             aspect-ratio: 1/1;
-
-            &.rotate {
-                animation: rotation 6s infinite linear;
-            }
         }
 
         &.inactive {
@@ -74,7 +61,7 @@ const onPlayButtonClick = () => {
         }
 
         button {
-            display: none;
+            display: flex;
             z-index: 10000;
             position: absolute;
             top: 50%;
@@ -113,10 +100,6 @@ const onPlayButtonClick = () => {
                 cursor: pointer;
                 background-color: rgba(0, 0, 0, 0.678);
             }
-        }
-
-        .play {
-            background-color: var(--col-button-play);
         }
 
         .next-song {
