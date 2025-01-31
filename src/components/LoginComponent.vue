@@ -23,7 +23,7 @@ const login = () => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
     width: 100%;
     height: 100%;
@@ -78,11 +78,11 @@ button {
 
     max-width: 35rem;
 
-
-}
-
-button:hover {
-    cursor: pointer;
-    background-color: var(--hover-col-button-play);
+    @media(min-width: 1200px) {
+        &.hover {
+            cursor: pointer;
+            background-color: var(--hover-col-button-play);
+        }
+    }
 }
 </style>
