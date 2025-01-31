@@ -60,7 +60,7 @@ const formattedReleaseDate = computed(() => {
     }
 
     @media(min-width: 1200px) {
-        &.hover {
+        &:hover {
             cursor: pointer;
         }
     }

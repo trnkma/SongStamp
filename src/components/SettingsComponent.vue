@@ -245,7 +245,7 @@ const startGame = () => {
             width: 5rem;
 
             @media(min-width: 1200px) {
-                &.hover {
+                &:hover {
                     cursor: pointer;
                 }
             }
