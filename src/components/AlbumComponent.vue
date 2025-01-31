@@ -1,36 +1,35 @@
 <template>
     <div>
         <div class="album-wrapper" @click="openDetails($event)">
-            <img :src="props.album?.images[0].url" alt="album-image">
-            <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
+            <img :src="props.track?.album?.images[0].url" alt="album-image">
             <h1>{{ formattedReleaseDate }}</h1>
         </div>
-        <AlbumDetailComponent v-if="showDetails" class="album-detail" :song-details="props"
+        <AlbumDetailComponent v-if="showDetails" class="album-detail" :track="props.track" :timeline-mode="false"
             @close="showDetails = false">
         </AlbumDetailComponent>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { type SongDetails } from '@/services/GameLogicService';
 import { computed, ref } from 'vue';
 import AlbumDetailComponent from './AlbumDetailComponent.vue';
-// const gameLogicService = GameLogicService.getInstance();
+import type { Track } from '@/types/SpotifyWebAPI';
+interface Props {
+    track: Track | null;
+}
 
 const showDetails = ref(false);
 
 const openDetails = (event: MouseEvent) => {
     event?.stopPropagation();
-    // gameLogicService.showSongDetails(props);
     showDetails.value = true;
 }
-const props = defineProps<SongDetails>();
+const props = defineProps<Props>();
 const formattedReleaseDate = computed(() => {
-    if (props.album) {
-        const [year] = props.album?.release_date.split('-');
+    if (props.track?.album) {
+        const [year] = props.track.album.release_date.split('-');
         return `${year}`;
     } else return null;
-    // return `${day}.${month}.${year}`;
 });
 </script>
 
@@ -59,21 +58,5 @@ const formattedReleaseDate = computed(() => {
     h1 {
         text-align: center;
     }
-
-    // .info {
-    //     background-color: rgba(0, 0, 0, 0.555);
-    //     position: absolute;
-    //     top: 0;
-    //     left: 0;
-    //     width: 100%;
-    //     height: 100%;
-    //     opacity: 0;
-    // }
-
-    // &:hover {
-    //     .info {
-    //         opacity: 1;
-    //     }
-    // }
 }
 </style>
