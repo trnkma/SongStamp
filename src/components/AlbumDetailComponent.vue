@@ -1,34 +1,33 @@
 <template>
     <div class="overlay" @click="close($event)">
         <div class="album-wrapper" @click="onClick($event)">
-            <img :src="props.songDetails.album?.images[0].url" alt="album-image">
-            <!-- <h1>Artist: {{ props.album.artists[0].name }}</h1> -->
+            <img :src="props.track?.album?.images[0].url" alt="album-image">
             <h1>{{ formattedReleaseDate }}</h1>
-            <div class="info">
-                <h3>{{ songDetails.songName }}</h3>
-                <h3>{{ songDetails.artist }}</h3>
+            <div v-if="!timelineMode" class="info">
+                <h3>{{ track?.name }}</h3>
+                <h3>{{ track?.artists[0].name }}</h3>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { type SongDetails } from '@/services/GameLogicService';
+import type { Track } from '@/types/SpotifyWebAPI';
 import { computed } from 'vue';
 
 interface Props {
-    songDetails: SongDetails;
+    track: Track | null;
+    timelineMode: boolean;
 }
 const props = defineProps<Props>();
 
 const emit = defineEmits(['close']);
 
 const formattedReleaseDate = computed(() => {
-    if (props.songDetails.album) {
-        const [year] = props.songDetails.album?.release_date.split('-');
+    if (props.track?.album) {
+        const [year] = props.track?.album?.release_date.split('-');
         return `${year}`;
     } else return null;
-    // return `${day}.${month}.${year}`;
 });
 const onClick = (event: MouseEvent) => {
     event?.stopPropagation()
