@@ -40,7 +40,7 @@ const formattedReleaseDate = computed(() => {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;
+    height: 100dvh
 }
 
 .album-wrapper {
@@ -57,6 +57,12 @@ const formattedReleaseDate = computed(() => {
 
     h1 {
         text-align: center;
+    }
+
+    @media(min-width: 1200px) {
+        &.hover {
+            cursor: pointer;
+        }
     }
 }
 </style>
