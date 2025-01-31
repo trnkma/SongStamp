@@ -60,7 +60,7 @@ export class TrackService {
         this.isLoading.value = true;
         this.checkForReset(s);
         if (this.searchDelay) clearTimeout(this.searchDelay);
-        this.searchDelay = setTimeout(async () => {                 //delay searching to give user time to type
+        this.searchDelay = window.setTimeout(async () => {                 //delay searching to give user time to type
             const response = await this.apiClient.get(
                 `${this.searchUrl}?query=${s}&type=playlist&market=ES&offset=${this.offset}&limit=${this.limit}`
             );
