@@ -96,9 +96,11 @@ const onPlayButtonClick = () => {
                 width: 200%;
             }
 
-            &:hover {
-                cursor: pointer;
-                background-color: rgba(0, 0, 0, 0.678);
+            @media(min-width: 1200px) {
+                &:hover {
+                    cursor: pointer;
+                    background-color: rgba(0, 0, 0, 0.678);
+                }
             }
         }
 

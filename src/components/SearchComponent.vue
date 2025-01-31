@@ -35,6 +35,7 @@
 import { TrackService } from '@/services/TrackService';
 import { ref, defineEmits } from 'vue';
 import SearchListItemComponent from './SearchListItemComponent.vue';
+import LoadingComponent from './LoadingComponent.vue';
 import vClickOutside from '../directives/ClickOutsideDirective';
 import type { MyPlaylist } from '@/types/SpotifyWebAPI';
 import CloseButtonComponent from './shared/CloseButtonComponent.vue';
@@ -174,8 +175,10 @@ const clearInput = () => {
                 z-index: 1000;
             }
 
-            &:hover .tooltip {
-                display: block;
+            @media(min-width: 1200px) {
+                &:hover .tooltip {
+                    display: block;
+                }
             }
         }
 

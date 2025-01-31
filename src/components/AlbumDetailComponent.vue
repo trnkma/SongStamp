@@ -55,8 +55,9 @@ const close = (event: MouseEvent) => {
         background-color: var(--col-bg);
         width: 90vw;
 
-        @media(min-width: 1024px) {
+        @media(min-width: 1200px) {
             width: 40vw;
+            max-width: 60rem;
         }
 
         img {

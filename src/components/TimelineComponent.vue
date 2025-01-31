@@ -129,7 +129,7 @@ const gameLogicService = GameLogicService.getInstance();
                     height: 100%;
                     transition: min-width 0.3s;
 
-                    @media(min-width: 1024px) {
+                    @media(min-width: 1200px) {
                         min-width: 1rem;
 
                         &:hover {
