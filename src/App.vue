@@ -5,7 +5,6 @@ import LoginComponent from './components/LoginComponent.vue';
 import PlayerComponent from './components/PlayerComponent.vue';
 import TimelineComponent from './components/TimelineComponent.vue';
 import { AuthService } from './services/AuthService';
-// import AlbumComponent from './components/AlbumComponent.vue';
 import SettingsComponent from './components/SettingsComponent.vue';
 import { GameLogicService } from './services/GameLogicService';
 import AlbumDetailComponent from './components/AlbumDetailComponent.vue';
@@ -40,13 +39,13 @@ const settingsOpen = ref<boolean>(true);
       <PlayerComponent class="player-comp" />
 
       <TimelineComponent class="timeline-comp" />
-      <div class="result" v-if="gameLogicService.showResult.value && gameLogicService.currentlyPlayingTrack">
-        <!-- <AlbumComponent :album="gameLogicService.currentlyPlayingTrack.value?.album"
-          :song-name="gameLogicService.currentlyPlayingTrack.value?.name"
-          :artist="gameLogicService.currentlyPlayingTrack.value?.artists[0].name"></AlbumComponent> -->
-        <AlbumDetailComponent :song-details="gameLogicService.currentSongDetails.value"></AlbumDetailComponent>
-        <div class="controls">
-          <button @click="gameLogicService.nextRound()">Next Track</button>
+      <div class="result-wrapper" v-if="gameLogicService.showResult.value && gameLogicService.currentlyPlayingTrack">
+        <div class="result">
+          <AlbumDetailComponent :track="gameLogicService.currentlyPlayingTrack.value" :timeline-mode="false">
+          </AlbumDetailComponent>
+          <div class="controls">
+            <button @click="gameLogicService.nextRound()">Next Track</button>
+          </div>
         </div>
       </div>
     </template>
@@ -67,36 +66,43 @@ const settingsOpen = ref<boolean>(true);
   height: 100%;
   max-height: 100%;
 
-  .result {
-    border-radius: 2rem;
-    background-color: var(--col-bg);
+  .result-wrapper {
+    z-index: 10000;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    @media(min-width: 1024px) {
-      width: 30%;
-    }
+    .result {
+      border-radius: 2rem;
+      background-color: var(--col-bg);
 
-    .controls {
-      width: 100%;
-      height: 4rem;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 1rem;
+      @media(min-width: 1024px) {
+        width: 30%;
+      }
 
-      button {
-        background-color: transparent;
-        border: none;
-        color: white;
-        font-size: 1.8rem;
+      .controls {
+        width: 100%;
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 1rem;
 
-        &:hover {
-          text-decoration: underline;
-          cursor: pointer;
+        button {
+          background-color: transparent;
+          border: none;
+          color: white;
+          font-size: 1.8rem;
+
+          &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
         }
       }
     }
