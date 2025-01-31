@@ -97,6 +97,7 @@ const startGame = () => {
     flex-direction: column;
     color: white;
     width: 100%;
+    max-width: 50vw;
     height: 100%;
     max-height: 100%;
     padding: 2rem;
@@ -195,14 +196,21 @@ const startGame = () => {
             padding: 0;
             padding-right: 1rem;
             cursor: pointer;
+
+            @media(min-width: 1200px) {
+                width: 20%;
+                max-width: 20%;
+            }
         }
 
         .add-playlist-button {
             font-size: 3rem;
             color: white;
 
-            &:hover {
-                color: var(--col-play);
+            @media(min-width: 1200px) {
+                &:hover {
+                    color: var(--col-play);
+                }
             }
         }
 
@@ -214,8 +222,8 @@ const startGame = () => {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 90vw;
-        height: 90dvh;
+        width: 100%;
+        height: 100%;
         background-color: var(--col-bg);
         border-radius: 2rem;
         box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
