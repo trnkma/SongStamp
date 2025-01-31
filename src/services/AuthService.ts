@@ -21,7 +21,7 @@ const state = reactive<AuthState>({
     codeVerifier: null,
     codeChallenge: null,
     tokenUrl: 'https://accounts.spotify.com/api/token',
-    redirectUri: 'https://192.168.1.102:5173/',
+    redirectUri: 'https://trnkma.github.io/SongStamp/',
     scopes: 'user-read-private user-read-email streaming user-modify-playback-state user-read-playback-state',
     clientId: '36c414d78a0c48fb9df058c21aca2302',
     _token: localStorage.getItem('spotify_auth_token') || null,
