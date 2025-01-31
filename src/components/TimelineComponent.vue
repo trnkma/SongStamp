@@ -2,9 +2,12 @@
     <div>
         <div class="teams">
             <button v-for="(team) in gameLogicService.teams.value" :key="team.id"
-                @click="gameLogicService.setDisplayedTeam(team)" :class="{ active: team.display }">
-                <h2>Team: {{ team.name }} ({{ team.timeline.length }})
-                </h2>
+                @click="gameLogicService.setDisplayedTeam(team)"
+                :class="{ active: team.display, isPlaying: team.isActive }">
+                <h2>{{ team.name }} ({{ team.timeline.length }})</h2>
+                <div class="isPlaying-wrapper" v-if="team.isActive">
+                    <IconPlayer class="icon-play"></IconPlayer>
+                </div>
             </button>
 
         </div>
@@ -14,6 +17,7 @@
                     <div v-for="(track, index) in gameLogicService.displayedTeam.value?.timeline" :key="track?.id"
                         class="timeline-item">
                         <div class="guess-area"
+                            :class="{ disabled: gameLogicService.playingTeam !== gameLogicService.displayedTeam }"
                             @click="gameLogicService.makeGuessBefore(track as Track, gameLogicService.playingTeam.value?.timeline[index - 1] as Track)">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                                 fill="#e8eaed">
@@ -22,8 +26,7 @@
                             </svg>
                         </div>
 
-                        <AlbumComponent class="album-comp" :album="track?.album" :songName="track?.name"
-                            :artist="track?.artists[0].name"></AlbumComponent>
+                        <AlbumComponent class="album-comp" :track="track"></AlbumComponent>
                         <div v-if="index + 1 === gameLogicService.displayedTeam.value?.timeline.length"
                             class="guess-area"
                             @click="gameLogicService.makeGuessAfter(track as Track, gameLogicService.playingTeam.value?.timeline[index + 1] as Track)">
@@ -43,13 +46,10 @@
 <script lang="ts" setup>
 import { GameLogicService } from '@/services/GameLogicService';
 import AlbumComponent from './AlbumComponent.vue';
+import IconPlayer from './icons/IconPlayer.vue';
 import type { Track } from '@/types/SpotifyWebAPI';
 
-// import { PlaybackService } from '@/services/PlaybackService';
 const gameLogicService = GameLogicService.getInstance();
-
-// const playbackService = PlaybackService();
-// let tracks = [];
 
 </script>
 
@@ -57,38 +57,53 @@ const gameLogicService = GameLogicService.getInstance();
 .teams {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 
     button {
         background-color: transparent;
-        border: 1px solid white;
-        border-radius: 1rem;
         display: flex;
+        border: none;
+        border-bottom: 2px solid rgb(160, 160, 160);
+        ;
         align-items: center;
         justify-content: center;
         margin-right: 2rem;
         padding: 1rem;
 
         h2 {
-            color: white;
+            color: rgb(160, 160, 160);
             padding: 0;
             margin: 0;
 
         }
 
         &.active {
-            background-color: white;
+            border-bottom: 2px solid var(--col-button-play);
 
             h2 {
-                color: black;
+                color: white;
+            }
+        }
+
+        .isPlaying-wrapper {
+            margin-left: 1rem;
+            width: 2.3rem;
+            height: 2.3rem;
+
+            svg {
+                fill: var(--col-button-play);
+                width: 100%;
             }
         }
     }
+
+
 }
 
 .timeline-wrapper {
     overflow-y: auto;
     width: 100%;
+    box-sizing: border-box;
 
     .timeline-items-wrapper {
         width: 100%;
@@ -99,13 +114,11 @@ const gameLogicService = GameLogicService.getInstance();
             display: flex;
             height: 16rem;
             max-width: 100%;
-            // overflow-y: auto;
             padding: 0 auto;
 
             .timeline-item {
                 height: 100%;
                 display: flex;
-                // position: relative;
 
                 .guess-area {
                     position: relative;
@@ -148,6 +161,10 @@ const gameLogicService = GameLogicService.getInstance();
                         content: '';
                         min-width: 2rem;
                         height: 100%;
+
+                        &.disabled {
+                            pointer-events: none;
+                        }
                     }
 
                     &::after {
@@ -160,6 +177,10 @@ const gameLogicService = GameLogicService.getInstance();
                         content: '';
                         min-width: 2rem;
                         height: 100%;
+
+                        &.disabled {
+                            pointer-events: none;
+                        }
                     }
                 }
 
