@@ -1,7 +1,6 @@
 import type { Album, Track } from "@/types/SpotifyWebAPI";
-import { computed, ref, type ComputedRef } from "vue";
+import { computed, ref } from "vue";
 import { TrackService } from "./TrackService";
-import { PlaybackService } from "./PlaybackService";
 
 export interface Team {
     id: number;
@@ -15,27 +14,23 @@ export interface SongDetails {
     album: Album | undefined;
     songName: string | undefined;
     artist: string | undefined;
+    track: Track | undefined;
 }
 
 export class GameLogicService {
     private static instance: GameLogicService;
-    private playbackService: PlaybackService;
     private trackService: TrackService;
-    private _teams = ref<Team[]>([]);
+    private _teams = ref<Team[]>([
+        { id: 0, name: null, timeline: [], isActive: false, display: false } //always have at least one team
+    ]);
     public playingTeam = computed(() => this.getActiveTeam());
     public displayedTeam = computed(() => this.getDisplayedTeam());
     public currentlyPlayingTrack = ref<Track | null>(null);
     public showResult = ref(false);
-    // public songDetails = ref<SongDetails>({
-    //     album: undefined,
-    //     songName: undefined,
-    //     artist: undefined
-    // });
     public displaySongDetails = ref(false);
 
     private constructor() {
         this.trackService = TrackService.getInstance();
-        this.playbackService = PlaybackService.getInstance();
     }
 
     public static getInstance(): GameLogicService {
@@ -45,20 +40,16 @@ export class GameLogicService {
         return GameLogicService.instance;
     }
 
-    // public showSongDetails(songProps: SongDetails) {
-    //     // this.songDetails.value = songProps;
-    //     this.displaySongDetails.value = true;
+    // public get currentSongDetails(): ComputedRef<SongDetails> {
+    //     return computed(() => {
+    //         return {
+    //             album: this.currentlyPlayingTrack.value?.album,
+    //             songName: this.currentlyPlayingTrack.value?.name,
+    //             artist: this.currentlyPlayingTrack.value?.artists[0].name,
+    //             track: this.currentlyPlayingTrack.value
+    //         }
+    //     })
     // }
-
-    public get currentSongDetails(): ComputedRef<SongDetails> {
-        return computed(() => {
-            return {
-                album: this.currentlyPlayingTrack.value?.album,
-                songName: this.currentlyPlayingTrack.value?.name,
-                artist: this.currentlyPlayingTrack.value?.artists[0].name
-            }
-        })
-    }
 
     public get teams() {
         return this._teams;
@@ -106,6 +97,7 @@ export class GameLogicService {
 
     // i know, i know - this make guess logic could be written much better, but it was late af
     public makeGuessBefore(after: Track, before?: Track) {
+        if (this.playingTeam.value !== this.displayedTeam.value) return; //no guess if player guesses in wrong team
         if (!this.currentlyPlayingTrack) return;
         if (before) {
             if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
@@ -120,6 +112,7 @@ export class GameLogicService {
     }
 
     public makeGuessAfter(before: Track, after?: Track) {
+        if (this.playingTeam.value !== this.displayedTeam.value) return; //no guess if player guesses in wrong team
         if (!this.currentlyPlayingTrack) return;
         if (after) {
             if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
@@ -172,7 +165,7 @@ export class GameLogicService {
 
     public nextRound() {
         this.showResult.value = false;
-        this.playbackService.nextTrack();
+        this.trackService.nextTrack();
         this.currentlyPlayingTrack = this.trackService.activeTrack;
         if (this._teams.value.length > 1) this.setNextTeamActive();
     }
@@ -180,7 +173,9 @@ export class GameLogicService {
 
     public startGame() {
         this.creatStartPointsForTeams();
-        this.trackService.setRandomSong();
+        this.trackService.playTrack(this.trackService.getRandomSong() as Track);
+        this.currentlyPlayingTrack = this.trackService.activeTrack;
+        // this.trackService.setRandomSong(randomSong);
         this.teams.value[0].isActive = true;
         this.teams.value[0].display = true;
     }
