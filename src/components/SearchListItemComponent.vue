@@ -58,9 +58,11 @@ const props = defineProps<Props>();
             transition: opacity 0.3s;
         }
 
-        &:hover .description {
-            opacity: 1;
-            cursor: pointer;
+        @media(min-width: 1200px) {
+            &:hover .description {
+                opacity: 1;
+                cursor: pointer;
+            }
         }
     }
 
