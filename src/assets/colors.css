@@ -1,22 +1,7 @@
 :root {
-    --col-primary: #ffffff;
-    --col-secondary: #9054b8;
-    --col-tertiary: #ffffff;
-
-    --col-text-base: #000000;
-    --col-text-inverted: #ffffff;
-    --col-text-secondary: #8d8d8d;
-    
-    --col-border-0: #8d8d8d;
-
-    --col-bg-0: white;
-    --col-bg-nav: #383838;
     --col-bg: #222222;
     --col-bg-secondary: #353535;
-
-    --col-button-save: #30a800;
-    --col-button-cancel: #b31717;
-
+    
     --hover-col-button-play: #1DB954;
     --col-button-play: #1ED760;
 }
