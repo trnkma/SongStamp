@@ -1,27 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { WebPlaybackPlayer } from "@/interfaces/Spotify";
 import axios, { type AxiosInstance } from "axios";
 import { ref, reactive, computed } from "vue";
-import { SnackbarService } from "./SnackBarService";
 import { AuthService } from "./AuthService";
+import type { SpotifyPlayer, WebPlaybackPlayer, WebPlaybackState, WebPlaybackTrack } from "@/types/SpotifyWebSDK";
 import type { Track } from "@/types/SpotifyWebAPI";
-import { TrackService } from "./TrackService";
 
-declare global { interface Window { onSpotifyWebPlaybackSDKReady: () => void; Spotify: any; } }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare global { interface Window { onSpotifyWebPlaybackSDKReady: () => void; Spotify: any; } } //no idea how this object actually looks like
 
 export class PlaybackService {
     private apiClient: AxiosInstance;
-    private snackbarService = SnackbarService();
     private authService = AuthService();
     private static instance: PlaybackService;
-    private trackService = TrackService.getInstance();
+
     private _state = reactive({
-        player: null as any,
+        player: null as SpotifyPlayer | null,
         deviceID: null as string | null,
         isLoadingPlayer: ref(true),
         isPlaying: ref(false),
-        activeTrack: ref(null as Track | null),
-        position: ref(null as number | null),
+        activeTrack: ref(null as WebPlaybackTrack | null),
+        position: ref(undefined as number | undefined),
         playerState: ref(null),
         repeatSet: false,
     });
@@ -52,9 +49,9 @@ export class PlaybackService {
         return computed(() => this._state.isPlaying);
     }
 
-    public get hasTrack() {
-        return computed(() => !!this.trackService.activeTrack);
-    }
+    // public get hasTrack() {
+    //     return computed(() => !!this.trackService.activeTrack);
+    // }
 
     public get state() {
         return this._state;
@@ -70,23 +67,6 @@ export class PlaybackService {
         this.apiClient.put("/me/player/play", { uris: [track.uri] }).then(() => {
             // this.apiClient.put('/me/player/repeat?state=track');
         });
-    }
-
-    public onPlayButtonClick(): void {
-        if (this._state.activeTrack) {
-            if (this._state.position !== null) this.togglePlay();
-            else this.playTrack(this._state.activeTrack);
-        } else if (this.trackService.activeTrack) {
-            this.playTrack(this.trackService.activeTrack.value as Track);
-        }
-    }
-
-    public nextTrack(): void {
-        this.playTrack(this.trackService.getNexSong());
-    }
-
-    public setTrackActive(track: any): void {
-        this._state.activeTrack = track;
     }
 
     private init(): void {
@@ -107,15 +87,9 @@ export class PlaybackService {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             const token = localStorage.getItem("spotify_auth_token");
-            if (!token) {
-                this.snackbarService.showBar(
-                    "Authentication token not found. Please log in again.",
-                    "Log in",
-                    this.authService.login
-                );
-                return;
-            }
-            this.createPlayer(token);
+            if (token) {
+                this.createPlayer(token)
+            };
         };
     }
 
@@ -141,21 +115,15 @@ export class PlaybackService {
             console.error("Playback Error:", message)
         );
 
-        this._state.player.addListener("player_state_changed", (stateData: any) => {
-            if (!stateData) {
-                this.snackbarService.showBar("Spotify disconnected", "Reconnect", this.reconnect.bind(this));
-                return;
-            }
-            this.setPlayingStatus(!stateData.paused);
-            this._state.position = stateData.position;
-            console.log(stateData);
-            this.getActiveTrack();
-            if (!this._state.repeatSet && !stateData.paused && !stateData.loading) {
+        this._state.player.addListener("player_state_changed", (stateData: WebPlaybackState | null) => {
+            this.setPlayingStatus(!stateData?.paused);
+            this._state.position = stateData?.position;
+            if (!this._state.repeatSet && !stateData?.paused && !stateData?.loading) {
                 this.apiClient.put("/me/player/repeat?state=track").then(() => {
                     this._state.repeatSet = true;
                 });
             }
-            if (stateData.paused && stateData.position === 0 && stateData.track_window.next_tracks.length === 0) {
+            if (stateData?.paused && stateData?.position === 0 && stateData?.track_window.next_tracks.length === 0) {
                 this._state.activeTrack = null;
                 console.log(this._state.activeTrack);
             }
@@ -174,24 +142,13 @@ export class PlaybackService {
         this._state.player.connect();
     }
 
-    private async getActiveTrack(): Promise<void> {
-        this._state.player?.getCurrentState().then((stateData: any) => {
-            if (!stateData) return;
-            this._state.activeTrack = stateData.track_window.current_track;
-        });
-    }
-
     private async reconnect(): Promise<void> {
-        try {
-            const tokenResponse = await this.authService.requestNewToken();
-            localStorage.setItem("spotify_auth_token", tokenResponse.access_token);
-            localStorage.setItem("refresh_token", tokenResponse.refresh_token);
 
-            this.activateDevice(this._state.deviceID!);
-        } catch (error) {
-            console.error("Error reconnecting:", error);
-            this.snackbarService.showBar("Reconnection failed. Please try again.", "Retry", this.reconnect.bind(this));
-        }
+        const tokenResponse = await this.authService.requestNewToken();
+        localStorage.setItem("spotify_auth_token", tokenResponse.access_token);
+        localStorage.setItem("refresh_token", tokenResponse.refresh_token);
+
+        this.activateDevice(this._state.deviceID!);
     }
 
     private async activateDevice(deviceId: string): Promise<void> {
@@ -212,7 +169,4 @@ export class PlaybackService {
         this._state.isPlaying = status;
     }
 
-    public getCurrentTrackReleaseDate() {
-        return this.trackService.activeTrack.value?.album.release_date;
-    }
 }
