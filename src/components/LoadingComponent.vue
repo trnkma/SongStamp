@@ -13,6 +13,7 @@ defineProps({
             <div></div>
             <div></div>
         </div>
+        <p>{{ message }}</p>
     </div>
 </template>
 
