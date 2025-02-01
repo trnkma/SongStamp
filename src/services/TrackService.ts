@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AxiosInstance } from "axios";
 import axios from "axios";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import type { Track, MyPlaylist, Playlist } from "@/types/SpotifyWebAPI";
 import { PlaybackService } from "./PlaybackService";
+import { AuthService } from "./AuthService";
 
 export class TrackService {
     private static instance: TrackService;
+    private authService = AuthService.getInstance();
     private playbackService = PlaybackService.getInstance();
     private apiClient: AxiosInstance;
     private searchUrl = "https://api.spotify.com/v1/search";
@@ -32,8 +34,12 @@ export class TrackService {
             baseURL: this.searchUrl,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("spotify_auth_token")}`,
+                Authorization: `Bearer ${this.authService.access_token.value}`,
             },
+        });
+
+        watch(this.authService.access_token, (newToken) => {
+            this.apiClient.defaults.headers.Authorization = `Bearer ${newToken}`;
         });
     }
 
