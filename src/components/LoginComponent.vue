@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { AuthService } from '@/services/AuthService';
 
-const authService = AuthService();
+const authService = AuthService.getInstance();
 
 const login = () => {
     authService.login();
@@ -27,7 +27,6 @@ const login = () => {
 .container {
     width: 100%;
     height: 100%;
-    ;
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -41,7 +40,7 @@ const login = () => {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin: 10rem 0 var(--big-gap) 0;
+    margin-top: 20vh;
 
     h1 {
         font-size: 5rem;

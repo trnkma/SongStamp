@@ -2,7 +2,7 @@
     <div>
         <div class="album-wrapper" @click="openDetails($event)">
             <img :src="props.track?.album?.images[0].url" alt="album-image">
-            <h1>{{ formattedReleaseDate }}</h1>
+            <p>{{ formattedReleaseDate }}</p>
         </div>
         <AlbumDetailComponent v-if="showDetails" class="album-detail" :track="props.track" :timeline-mode="false"
             @close="showDetails = false">
@@ -55,7 +55,8 @@ const formattedReleaseDate = computed(() => {
         object-fit: cover;
     }
 
-    h1 {
+    p {
+        font-size: 1.6rem;
         text-align: center;
     }
 
