@@ -93,7 +93,6 @@ export class AuthService {
     async getRefreshToken(): Promise<void> {
         try {
             const result = await this.requestNewToken();
-            console.log("got new tokens")
             this.saveToken(result);
         } catch (error) {
             console.error('Error refreshing token:', error);
@@ -157,11 +156,6 @@ export class AuthService {
         const now = new Date();
         const expiry = new Date(now.getTime() + (expires_in * 1000));
         localStorage.setItem('expires', expiry.toString());
-
-        console.log(localStorage.getItem('access_token'));
-        console.log(localStorage.getItem('refresh_token'));
-        console.log(localStorage.getItem('expires_in'));
-        console.log(localStorage.getItem('expires'));
     }
 }
 
