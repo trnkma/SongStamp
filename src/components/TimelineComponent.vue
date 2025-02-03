@@ -11,7 +11,8 @@
             </button>
 
         </div>
-        <div class="timeline-wrapper">
+        <div class="timeline-wrapper"
+            :class="{ hasItems: gameLogicService.displayedTeam.value?.timeline?.length ? true : false }">
             <div class="timeline-items-wrapper">
                 <div class="timeline-items">
                     <div v-for="(track, index) in gameLogicService.displayedTeam.value?.timeline" :key="track?.id"
@@ -57,7 +58,6 @@ const gameLogicService = GameLogicService.getInstance();
 
 <style lang="scss" scoped>
 .timeline-container {
-    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -114,11 +114,14 @@ const gameLogicService = GameLogicService.getInstance();
     }
 
     .timeline-wrapper {
-        border-top: 1px white solid;
-        padding-top: 1rem;
         overflow-y: auto;
         width: 100%;
         box-sizing: border-box;
+        box-shadow: #1ed75ffd 0px -2px 10px;
+
+        &.hasItems {
+            padding-top: 1rem;
+        }
 
         .timeline-items-wrapper {
             width: 100%;
