@@ -54,6 +54,7 @@ const close = (event: MouseEvent) => {
         border-radius: 2rem;
         background-color: var(--col-bg);
         width: 90vw;
+        box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
 
         @media(min-width: 1200px) {
             width: 40vw;
