@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { computed, reactive, ref, watch } from "vue";
-import type { Track, MyPlaylist, Playlist } from "@/types/SpotifyWebAPI";
+import type { Track, MyPlaylist, Playlist, PlaylistItem } from "@/types/SpotifyWebAPI";
 import { PlaybackService } from "./PlaybackService";
 import { AuthService } from "./AuthService";
 
@@ -128,13 +127,14 @@ export class TrackService {
         }
     }
 
-    private async getTracksOfPlaylist(playlist: Playlist): Promise<any[]> {
+    private async getTracksOfPlaylist(playlist: Playlist): Promise<Track[]> {
         const response = await this.apiClient.get(playlist.tracks.href);
         const data = await response.data;
-        return data.items.map((item: any) => item.track);
+        console.log(data)
+        return data.items.map((item: PlaylistItem) => item.track);
     }
 
-    public async addPlaylist(playlist: any): Promise<void> {
+    public async addPlaylist(playlist: MyPlaylist): Promise<void> {
         playlist.songs = await this.getTracksOfPlaylist(playlist);
         this.state.chosenList = [...this.state.chosenList, playlist];
         this.state.list = this.state.list.filter(
