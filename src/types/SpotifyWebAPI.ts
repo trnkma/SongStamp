@@ -167,5 +167,37 @@ export interface Actions {
   };
 }
 
+export interface PlaylistItemsResponse {
+  href: string;
+  limit: number;
+  next: string | null;
+  offset: number;
+  previous: string | null;
+  total: number;
+  items: PlaylistItem[];
+}
+
+export interface PlaylistItem {
+  added_at: string;
+  added_by: SpotifyUser;
+  is_local: boolean;
+  track: Track;
+}
+
+interface SpotifyUser {
+  external_urls: {
+    spotify: string;
+  };
+  followers: {
+    href: string | null;
+    total: number;
+  };
+  href: string;
+  id: string;
+  type: "user";
+  uri: string;
+}
+
+
 
 
