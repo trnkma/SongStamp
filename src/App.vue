@@ -56,8 +56,11 @@ const settingsOpen = ref<boolean>(true);
 
       <TimelineComponent class="timeline-comp" />
       <div class="result-wrapper" v-if="gameLogicService.showResult.value && gameLogicService.currentlyPlayingTrack">
-        <div class="result">
-          <AlbumDetailComponent :track="gameLogicService.currentlyPlayingTrack.value" :timeline-mode="false">
+        <div class="result-view" :class="{ guessedRight: gameLogicService.guessedRight.value }">
+          <p class="result">{{ gameLogicService.guessedRight.value ? "You guessed correct!" : "You guessed wrong!" }}
+          </p>
+          <AlbumDetailComponent :track="gameLogicService.currentlyPlayingTrack.value" :timeline-mode="false"
+            :class="{ albumWrapper: true }">
           </AlbumDetailComponent>
           <div class="controls">
             <button @click="gameLogicService.nextRound()">Next Track</button>
@@ -155,9 +158,30 @@ const settingsOpen = ref<boolean>(true);
     justify-content: center;
     align-items: center;
 
-    .result {
+
+    .result-view {
       border-radius: 2rem;
+      box-shadow: rgba(0, 0, 0, 0.507) 0px 0px 15px;
+      ;
       background-color: var(--col-bg);
+
+      :deep(.album-wrapper) {
+        box-shadow: none;
+      }
+
+      &.guessedRight {
+        .result {
+          color: #1ed75fa6;
+        }
+      }
+
+      .result {
+        color: rgb(180, 0, 0);
+        width: 100%;
+        text-align: center;
+        font-size: 1.8rem;
+        margin-top: 2rem;
+      }
 
       @media(min-width: 1024px) {
         width: 40vw;
