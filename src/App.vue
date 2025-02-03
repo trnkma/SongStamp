@@ -261,12 +261,10 @@ const settingsOpen = ref<boolean>(true);
   .timeline-comp {
     position: absolute;
     bottom: 0;
-    // transform: translate(-50%);
     width: 100%;
 
     @media(min-width: 1200px) {
-      width: 90%;
-      max-width: 160rem;
+      width: 100%;
     }
   }
 

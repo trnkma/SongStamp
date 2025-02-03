@@ -66,7 +66,7 @@ const gameLogicService = GameLogicService.getInstance();
     .teams {
         display: flex;
         align-items: center;
-        // margin-bottom: 1rem;
+        padding: 0 2rem;
         width: 100%;
         max-width: 100%;
         overflow-y: auto;
