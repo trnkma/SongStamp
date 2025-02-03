@@ -28,6 +28,7 @@ export class GameLogicService {
     public currentlyPlayingTrack = ref<Track | null>(null);
     public showResult = ref(false);
     public displaySongDetails = ref(false);
+    public guessedRight = ref(false);
 
     private constructor() {
         this.trackService = TrackService.getInstance();
@@ -90,10 +91,12 @@ export class GameLogicService {
         if (before) {
             if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
                 this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
+                this.guessedRight.value = true;
             }
         } else {
             if (this.getReleaseYearOfTrack(this.currentlyPlayingTrack.value as Track) <= this.getReleaseYearOfTrack(after)) {
                 this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
+                this.guessedRight.value = true;
             }
         }
         this.showResult.value = true;
@@ -104,10 +107,12 @@ export class GameLogicService {
         if (after) {
             if (this.checkIfInRange(before, after, this.currentlyPlayingTrack.value as Track)) {
                 this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
+                this.guessedRight.value = true;
             }
         } else {
             if (this.getReleaseYearOfTrack(this.currentlyPlayingTrack.value as Track) >= this.getReleaseYearOfTrack(before)) {
                 this.addToActiveTimeline(this.currentlyPlayingTrack.value as Track);
+                this.guessedRight.value = true;
             }
         }
         this.showResult.value = true;
@@ -127,6 +132,7 @@ export class GameLogicService {
         if (activeTimeline) {
             activeTimeline.push(track);
             activeTimeline = this.sortTracksByReleaseDate(activeTimeline as Track[]);
+
         }
     }
 
@@ -152,6 +158,7 @@ export class GameLogicService {
 
     public nextRound() {
         this.showResult.value = false;
+        this.guessedRight.value = false;
         this.trackService.nextTrack();
         this.currentlyPlayingTrack = this.trackService.activeTrack;
         if (this._teams.value.length > 1) this.setNextTeamActive();
