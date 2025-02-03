@@ -41,16 +41,13 @@ export class PlaybackService {
     }
 
     public playTrack(track: Track | null): void {
-        console.log(this.deviceID)
         if (!track) return;
-        console.log(track);
         this.apiClient?.put("/me/player/play", { uris: [track.uri] }).then(() => { });
     }
 
     init() {
         const existingScript = document.querySelector('script[src="https://sdk.scdn.co/spotify-player.js"]');
         watch(this.authService.access_token, (newToken) => {
-            console.log("sensed change in the token ~");
             this.apiClient.defaults.headers.Authorization = `Bearer ${newToken}`;
             this.createPlayer(newToken);
         });
@@ -97,7 +94,6 @@ export class PlaybackService {
         this.player.addListener("player_state_changed", (stateData: WebPlaybackState | null) => {
             this.isPlaying.value = !stateData?.paused;
 
-            console.log(stateData)
             if (!this.repeatSet && !stateData?.paused && !stateData?.loading) {
                 this.apiClient?.put("/me/player/repeat?state=track").then(() => {
                     this.repeatSet = true;
