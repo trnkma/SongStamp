@@ -103,6 +103,7 @@ const settingsOpen = ref<boolean>(true);
 
   .logout-prompt {
     width: 90%;
+    max-width: 30rem;
     padding: 2rem;
     z-index: 100000;
     position: absolute;
