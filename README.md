@@ -34,11 +34,10 @@ Motivation for building Songstamp:
 Matthias loves the game Hitster and already after the first time playing it he had a web based version of it in mind. He already started building one in Angular, but this version didn't make it very far. So this project was a good reason to try it again.
 
 ## Local dev setup
-To run the app locally, you need to change the redirect URI in the AuthService to your local IP-Adress you are hosting the app on.
+To run the app locally, you need to change the redirect URI in the AuthService to "https://localhost:5173/SongStamp/".
 
 ## Some features still missing
 - Currently you can only start a new game by reloading the page. (ugly way)
-- no real feedback if guessed right or wrong
 - no option to save track to like songs in Spotify
 
 

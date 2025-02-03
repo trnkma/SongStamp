@@ -15,6 +15,7 @@ export class AuthService {
     private codeChallenge: string = "";
     private tokenUrl = 'https://accounts.spotify.com/api/token';
     private redirectUri = 'https://trnkma.github.io/SongStamp/';
+    // private redirectUri = 'https://localhost:5173/SongStamp/'; //for local hosting
     private scopes = 'user-read-private user-read-email streaming user-modify-playback-state user-read-playback-state';
     private clientId = '36c414d78a0c48fb9df058c21aca2302';
     access_token = ref("");
